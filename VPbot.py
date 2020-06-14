@@ -11,11 +11,6 @@ user_callsign = "0" + str(random.randint(1,8))
 
 TOKEN = "1021846855:AAFrd221fhN-0sLJB5j_P-C4sm6wwvKmFAk"
 
-updater = Updater(token = TOKEN, use_context = True) #fetches updates from Telegram
-
-dispatcher = updater.dispatcher
-
-
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                      level=logging.INFO)
 
@@ -32,12 +27,20 @@ def roger(update,context):
 
 start_handler = CommandHandler('start',start) #handles /start command
 roger_handler = MessageHandler(Filters.text & (~Filters.command), roger)
-dispatcher.add_handler(start_handler)
-dispatcher.add_handler(roger_handler)
 
-#Starts the bot
-updater.start_webhook(listen="0.0.0.0",
-                          port=int(PORT),
-                          url_path=TOKEN)
-updater.bot.setWebhook('https://fast-brushlands-97835.herokuapp.com/' + TOKEN)
+
+def main():
+    updater = Updater(token = TOKEN, use_context = True) #fetches updates from Telegram
+    dispatcher = updater.dispatcher
+    dispatcher.add_handler(start_handler)
+    dispatcher.add_handler(roger_handler)
+
+    #Starts the bot
+    updater.start_webhook(listen="0.0.0.0",
+                            port=int(PORT),
+                            url_path=TOKEN)
+    updater.bot.setWebhook('https://fast-brushlands-97835.herokuapp.com/' + TOKEN)
+
+if __name__ == '__main__':
+    main()
 
