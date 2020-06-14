@@ -1,21 +1,43 @@
-
-import telebot
 import random
 from datetime import datetime
+from telegram.ext import CommandHandler, MessageHandler, Filters
+from telegram.ext import Updater 
+import logging
+import os
+PORT = int(os.environ.get('PORT',5000))
 
-TOKEN = "1200317552:AAHUqxtgQGMqOFy4L7F8GzadU_9nnByPJjw"
+user_callsign = "0" + str(random.randint(1,8))
+#bot.reply_to(message, "Hello! My callsign is 09.\n" + "Your callsign is " + user_callsign + ".")
 
-bot = telebot.TeleBot(TOKEN)
+TOKEN = "1021846855:AAFrd221fhN-0sLJB5j_P-C4sm6wwvKmFAk"
 
-random.seed(datetime.now())
+updater = Updater(token = TOKEN, use_context = True) #fetches updates from Telegram
 
-@bot.message_handler(commands=['start', 'help'])
-def initiate_convo(message):
+dispatcher = updater.dispatcher
+
+
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                     level=logging.INFO)
+
+#callback function
+def start(update,context): #context refers to everything after '/' command
     user_callsign = "0" + str(random.randint(1,8))
-    bot.reply_to(message, "Hello! My callsign is 09.\n" + "Your callsign is " + user_callsign + ".")
+    context.bot.send_message(chat_id=update.effective_chat.id, text=
+        "Hullo! My callsign is 09.\n" + "Your callsign is " + user_callsign + ".")
 
-@bot.message_handler(func=lambda m: True)
-def echo_all(message):
-    bot.send_message(message.chat.id, "09, roger over.")
+def roger(update,context):
+    context.bot.send_message(chat_id=update.effective_chat.id,text="09, roger over.")
 
-bot.polling()
+#creating handlers
+
+start_handler = CommandHandler('start',start) #handles /start command
+roger_handler = MessageHandler(Filters.text & (~Filters.command), roger)
+dispatcher.add_handler(start_handler)
+dispatcher.add_handler(roger_handler)
+
+#Starts the bot
+updater.start_webhook(listen="0.0.0.0",
+                          port=int(PORT),
+                          url_path=TOKEN)
+updater.bot.setWebhook('https://fast-brushlands-97835.herokuapp.com/' + TOKEN)
+
