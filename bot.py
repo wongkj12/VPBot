@@ -21,7 +21,7 @@ def start(update,context): #context refers to everything after '/' command
         "Hullo! My callsign is 09.\n" + "Your callsign is " + user_callsign + ".")
 
 def roger(update,context):
-    context.bot.send_message(chat_id=update.effective_chat.id,text="09, ok over.")
+    context.bot.send_message(chat_id=update.effective_chat.id,text="09, roger over.")
 
 #creating handlers
 
